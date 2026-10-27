@@ -2,6 +2,8 @@
 
 日期：2026-10-27。状态：文档审查中（未作为 v1.0 发布）。
 
+审核入口：[Pull Request #1](https://github.com/1998x-stack/nano-quant/pull/1)。已核对：PR 更改 10 个文件，工作分支 10/10 份预期文件可读取，23 个内部 Markdown 目标链接存在；`main` 保留仅含初始化 README 的根提交。此处为文件结构和 Git 状态核验，不是已完成领域专家审核。
+
 ## 仓库现状与实作边界
 
 Phase A 开始时，远程仓库为空、无历史源代码和已有分支。为使 GitHub 上的工作可以被审查，先在 `main` 放入最小 README 创建根提交，然后从该提交创建 `docs/phase-a-architecture` 工作分支。此阶段没有实现可运行的量化引擎、Python 包、CI 或测试。
