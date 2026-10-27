@@ -6,7 +6,6 @@ import argparse
 import json
 import sys
 from datetime import datetime, timezone
-from decimal import Decimal
 from pathlib import Path
 from typing import Sequence
 
