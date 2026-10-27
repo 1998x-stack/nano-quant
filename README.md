@@ -2,7 +2,7 @@
 
 **A modular, testable, reproducible quantitative-finance research framework.**
 
-> **Status: Phase C synthetic research baseline (pre-v1.0).** Phase B's Golden Ledger remains supported. This repository now runs a complete *synthetic-data* eight-domain research path, but does not yet meet all real-market or v1.0 release verification requirements. The untrained momentum rank score is not an empirically validated return forecast.
+> **Status: Phase D independent-validation scaffold (pre-v1.0).** The eight-domain synthetic pipeline now includes point-in-time revision and historical-universe tests, order approval fingerprinting, unsupported corporate-action rejection, walk-forward split **protocols** and negative-control/cost diagnostics. No trained or empirically validated real-market model is claimed.
 
 ## Quick start
 
@@ -21,6 +21,11 @@ python -m nano_quant.cli smoke --config examples/phase_b_golden.json
 python -m nano_quant.cli backtest \
     --config examples/daily_equity_v1.json \
     --output-dir reports/daily_equity_v1
+
+# Phase D research diagnostics (no training, no real-market alpha claim)
+python -m nano_quant.cli validate \
+    --config examples/daily_equity_v1.json \
+    --output reports/validation/audit.json
 ```
 
 The backtest creates:
@@ -38,13 +43,16 @@ The reference scenario: 120 **fictional weekday** sessions, three fictitious USD
 - [Point-in-time/temporal requirements](docs/architecture/temporal-data.md)
 - [Phase C synthetic data manifest](docs/research/phase-c-synthetic-manifest.json)
 - [Phase C implementation and verification report](docs/PHASE-C-REPORT.md)
+- [Phase D validation APIs](docs/modules/phase-d-validation.md)
+- [Phase D actual CI report](docs/PHASE-D-REPORT.md)
+- [Real-data onboarding gates](docs/research/real-data-readiness.md)
 - [Independent acceptance test matrix](docs/validation/acceptance.md)
 - [v1.0 release plan](docs/releases/v1.0-plan.md)
 - [Branch and release rules](docs/governance/branching-and-releases.md)
 
 ## Development workflow
 
-The stable integration branch is `main`. PR #2 contains Phase B; **Phase C PR #3 is stacked on Phase B** until #2 has been reviewed and merged, after which PR #3 should be retargeted to `main` and CI rechecked. No `v1.0.0` tag is issued for the engineering baseline.
+The stable integration branch is `main`. PR #2 contains Phase B; **Phase C PR #3 is stacked on Phase B** and **Phase D PR #4 is stacked on Phase C**. Merge in sequence, retargeting and checking CI before each downstream PR reaches `main`. No `v1.0.0` tag is issued for the engineering baseline.
 
 ## License
 
