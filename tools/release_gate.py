@@ -177,7 +177,7 @@ def verify_candidate(
     """Fail closed on false reproducibility, missing evidence or false alpha claim."""
     _require(bool(COMMIT_RE.fullmatch(expected_revision)), "invalid commit revision")
     a = _validate_run(first, expected_revision)
-    b = _validate_run(second, expected_revision)
+    _validate_run(second, expected_revision)
     file_hashes: dict[str, str] = {}
     for name in RESULT_FILES:
         digest = _hash(first / name)
