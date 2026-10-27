@@ -14,7 +14,6 @@ from nano_quant.core import (
     RiskDecision,
     Side,
 )
-
 from nano_quant.core.order_integrity import order_fingerprint
 
 CENT = Decimal("0.01")

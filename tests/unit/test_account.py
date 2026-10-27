@@ -1,6 +1,5 @@
 """Accounting, fill timing, risk approval, sell and failure invariants."""
 
-from dataclasses import replace
 from datetime import datetime, timedelta, timezone
 from decimal import Decimal
 

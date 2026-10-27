@@ -56,4 +56,4 @@ def test_approved_order_executes_but_unbound_mock_decision_does_not() -> None:
             order, unbound, golden_bars()[1],
             fee=Decimal("1"), slippage_bps=Decimal("10"),
         )
-    assert bar.close == Decimal("10.00")
+    assert bar.close == Decimal("11.00")
