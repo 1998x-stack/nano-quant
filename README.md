@@ -1,33 +1,43 @@
 # nano-quant
 
-**Modular quantitative finance research framework — architecture phase.**
+**Modular and reproducible quantitative finance research framework.**
 
-Status: **Phase A — architecture review**. This repository does **not** yet contain an executable backtest, tested finance calculations, or a validated investment strategy.
+> **Status: Phase B engineering scaffold (pre-v1.0).** A tested synthetic-data harness exists. A full eight-module research backtest, real data ingestion, independent risk policy, and live brokerage integration do **not** yet exist.
 
-## Vision
+## Quick start
 
-Make the path from historical data to research, models, strategies, portfolio weights, risk controls, simulated orders, and evaluation explicit, testable, time-consistent, and reproducible.
+Requires Python 3.11+.
 
-The v1.0 reference use case is daily, long-only, unlevered equities in USD with versioned synthetic fixtures. This is a software/research baseline—not a performance claim.
+```bash
+python -m pip install -e ".[dev]"
+python -m ruff check .
+python -m mypy src/nano_quant
+python -m pytest -q --cov=nano_quant --cov-report=term-missing --cov-fail-under=85
+python -m nano_quant.cli smoke --config examples/phase_b_golden.json
+# After installation, also available as:
+nano-quant smoke --config examples/phase_b_golden.json
+```
 
-## Phase A design
+The **smoke** command uses fictional market data and an explicitly **mocked** risk approval. It checks a historical information cutoff, a single next-day-open BUY fill, and USD cash/share accounting. The independent Golden Ledger A expected values are: execution price $10.01, fee $1.00, remaining cash $898.90, 10 shares, close NAV $1008.90. These are software test values, **not real investment results**.
 
-- [System architecture (中文)](docs/architecture/overview.md)
+The full `backtest --config` CLI subcommand intentionally exits nonzero with "not implemented" until Phase C. Only the core contracts, synthetic data and minimal ledger are implemented; research/model/strategy/portfolio/evaluation packages are Phase C placeholders.
+
+## Project documents
+
+- [Architecture overview](docs/architecture/overview.md)
 - [Core interface contracts](docs/architecture/contracts.md)
-- [Point-in-time and event-time rules](docs/architecture/temporal-data.md)
-- [Architecture decision record](docs/architecture/adr/0001-modular-monolith.md)
-- [Primary evidence and research protocol](docs/research/evidence-policy.md)
-- [Branch, PR, release and tag governance](docs/governance/branching-and-releases.md)
-- [v1.0 scope, backlog, v2.0 evolution](docs/releases/v1.0-plan.md)
-- [Objective acceptance and golden tests](docs/validation/acceptance.md)
-- [Phase A decision log / handoff](docs/PHASE-A-REPORT.md)
+- [Point-in-time conventions](docs/architecture/temporal-data.md)
+- [Phase B architecture decision](docs/architecture/adr/0002-phase-b-golden-scaffold.md)
+- [Research evidence rules](docs/research/evidence-policy.md)
+- [Git governance](docs/governance/branching-and-releases.md)
+- [v1.0 rollout](docs/releases/v1.0-plan.md)
+- [Objective acceptance tests](docs/validation/acceptance.md)
+- [Phase B execution report](docs/PHASE-B-REPORT.md)
 
-## Branch policy
+## Git workflow
 
-`main` is the reviewed stable integration branch. Module work happens in temporary `module/*` branches; `release/vX.Y` branches stabilize releases; immutable version tags `vX.Y.Z` identify shipped snapshots. Do not treat branches as module storage.
+Reviewed and tested changes merge into `main`. Short-lived `feature/*` / `module/*` branches isolate development; `release/vX.Y` stabilizes releases; immutable `vX.Y.Z` tags identify official releases.
 
-## Next step
+## Licensing
 
-Phase B will create the installable Python package, skeleton modules, tests and CI. The commands and test cases in design documents are **specifications**, not claims of successful execution.
-
-No live trading, leverage, broker integration, or investment advice is provided.
+The repository owner has **not selected a software license**. Public visibility alone does not grant reuse rights.
