@@ -2,6 +2,7 @@
 
 import csv
 import json
+from decimal import Decimal
 from pathlib import Path
 
 import pytest
@@ -12,7 +13,6 @@ from nano_quant.core import ContractError
 from nano_quant.core.backtest_config import BacktestConfig, load_backtest_config
 from nano_quant.data.synthetic import DATASET_ID, synthetic_equities
 from nano_quant.evaluation.performance import NavPoint, evaluate_nav
-from decimal import Decimal
 
 
 def test_end_to_end_generates_trades_and_reproducible_metrics() -> None:
