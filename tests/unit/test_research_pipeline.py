@@ -8,7 +8,10 @@ import pytest
 
 from nano_quant.core import ContractError, PortfolioState
 from nano_quant.core.research_types import (
-    FactorFrame, Forecast, StrategySignal, TargetPortfolio,
+    FactorFrame,
+    Forecast,
+    StrategySignal,
+    TargetPortfolio,
 )
 from nano_quant.data import INSTRUMENTS, build_snapshot, synthetic_equities
 from nano_quant.models import baseline_rank_forecast
