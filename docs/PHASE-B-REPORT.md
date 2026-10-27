@@ -1,6 +1,8 @@
 # Phase B — 实现与验收报告
 
-状态：**开发分支的早期工程基座**；完整 v1.0 未实现。
+状态：**工程基座已通过自动化 CI，PR #2 待代码审核与合并**；完整 v1.0 尚未实现。
+
+已核验 GitHub Actions：[PR #2](https://github.com/1998x-stack/nano-quant/pull/2) 的 [Python 3.11/3.12 CI 运行](https://github.com/1998x-stack/nano-quant/actions/runs/40472143078)。完成了可编辑安装、Ruff、mypy、pytest 与 CLI smoke：**42 tests passed，Python 3.11 行覆盖率 94.06%**。该证据对应 commit `e4e2e104`，后续纯文档提交也应由最新 CI 重新核验。
 
 ## 交付清单
 
@@ -42,4 +44,4 @@ pnl_usd:       8.90
 
 ## Phase B 退出条件
 
-只有在 GitHub CI 完成且所有必需检查通过、PR 被审核合入 main 之后，才可把 Phase B 标记为最终交付完成。若 CI 未运行或测试失败，必须如实列出失败项与修复状态。
+工程自动化验收已通过；**PR 仍待审核合并**，因此尚未宣称 Phase B 已进入 main。只有审核完成、最新 HEAD 的必需 CI 检查通过且 PR 合并后，才可把 Phase B 标记为正式集成交付完成。若 CI 未运行或测试失败，必须如实列出失败项与修复状态。
