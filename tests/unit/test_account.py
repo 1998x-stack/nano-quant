@@ -1,11 +1,13 @@
 """Accounting, fill timing, risk approval, sell and failure invariants."""
 
+from dataclasses import replace
 from datetime import datetime, timedelta, timezone
 from decimal import Decimal
 
 import pytest
 
 from nano_quant.core import ContractError, OrderIntent, RiskDecision, Side
+from nano_quant.core.order_integrity import order_fingerprint
 from nano_quant.data import golden_bars
 from nano_quant.execution.account import SimulatedAccount
 
@@ -25,6 +27,7 @@ def _decision(order, approved=True):
     return RiskDecision(
         AT, (order.order_id,), approved,
         () if approved else ("POSITION_LIMIT",), "policy-v1",
+        order_digest=order_fingerprint(order),
     )
 
 

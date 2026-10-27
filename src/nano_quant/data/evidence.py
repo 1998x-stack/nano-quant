@@ -36,7 +36,9 @@ class Observation:
             ensure_utc(getattr(self, field), field)
         if not (self.published_at <= self.available_at):
             raise ContractError("publication must precede availability")
-        if self.revision < 1 or isinstance(self.revision, bool):
+        if self.ingested_at < self.published_at:
+            raise ContractError("ingestion cannot predate original publication")
+        if type(self.revision) is not int or self.revision < 1:
             raise ContractError("revision must be a positive integer")
         if (len(self.source_document_sha256) != 64 or
             any(ch not in "0123456789abcdef" for ch in self.source_document_sha256)):

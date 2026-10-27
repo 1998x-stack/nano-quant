@@ -8,8 +8,12 @@ import pytest
 
 from nano_quant.core import ContractError
 from nano_quant.data.evidence import (
-    CorporateAction, ListingRecord, Observation, historical_members,
-    reject_unsupported_actions, vintage_as_of,
+    CorporateAction,
+    ListingRecord,
+    Observation,
+    historical_members,
+    reject_unsupported_actions,
+    vintage_as_of,
 )
 
 UTC = timezone.utc

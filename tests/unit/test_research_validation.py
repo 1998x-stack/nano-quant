@@ -6,7 +6,9 @@ import pytest
 
 from nano_quant.core import ContractError
 from nano_quant.validation import (
-    circular_shift_negative_control, rank_ic, walk_forward_windows,
+    circular_shift_negative_control,
+    rank_ic,
+    walk_forward_windows,
 )
 
 

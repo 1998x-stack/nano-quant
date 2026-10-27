@@ -15,6 +15,8 @@ from nano_quant.core import (
     Side,
 )
 
+from nano_quant.core.order_integrity import order_fingerprint
+
 CENT = Decimal("0.01")
 BPS = Decimal("10000")
 
@@ -53,6 +55,8 @@ class SimulatedAccount:
             raise ContractError("ASOF_VIOLATION")
         if not (order.earliest_execution_at <= bar.open_at):
             raise ContractError("EXECUTION_TOO_EARLY")
+        if approval.order_digest != order_fingerprint(order):
+            raise ContractError("ORDER_APPROVAL_MISMATCH")
         if order.instrument_id != bar.instrument_id:
             raise ContractError("MISSING_BAR")
         if not fee.is_finite() or fee < 0 or fee != fee.quantize(CENT):
