@@ -5,6 +5,7 @@ from __future__ import annotations
 from decimal import Decimal
 
 from nano_quant.core import OrderIntent, PortfolioState, RiskDecision, Side
+from nano_quant.core.order_integrity import order_fingerprint
 from nano_quant.core.research_types import TargetPortfolio
 
 
@@ -51,6 +52,7 @@ def review_orders(
                 approved=not reasons,
                 reason_codes=tuple(sorted(set(reasons))),
                 risk_policy_version="long-only-basic-v1",
+                order_digest=order_fingerprint(order),
             )
         )
     return tuple(result)

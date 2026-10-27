@@ -36,3 +36,7 @@ jobs:
         run: python -m nano_quant.cli backtest --config examples/daily_equity_v1.json --output-dir reports/ci-daily
       - name: Assert research artifacts
         run: python -c "from pathlib import Path; p=Path('reports/ci-daily'); assert all((p/n).is_file() for n in ('run-manifest.json','metrics.json','equity-curve.csv','trade-ledger.csv','rejections.csv'))"
+      - name: Phase D evidence and synthetic validation audit
+        run: python -m nano_quant.cli validate --config examples/daily_equity_v1.json --output reports/validation/audit.json
+      - name: Assert validation artifact explicitly disclaims alpha
+        run: python -c "import json; from pathlib import Path; d=json.loads(Path('reports/validation/audit.json').read_text()); assert d['phase']=='D' and d['trained_model'] is False and d['out_of_sample_model_results'] is False and d['cost_sensitivity']['comparison'] in ('PASS','INCOMPARABLE_DIFFERENT_TRADE_PATH')"

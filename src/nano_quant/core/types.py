@@ -126,9 +126,15 @@ class RiskDecision:
     approved: bool
     reason_codes: tuple[str, ...]
     risk_policy_version: str
+    order_digest: str | None = None
 
     def __post_init__(self) -> None:
         ensure_utc(self.as_of, "as_of")
+        if self.order_digest is not None and (
+            len(self.order_digest) != 64
+            or any(c not in "0123456789abcdef" for c in self.order_digest)
+        ):
+            raise ContractError("order_digest must be SHA256 hex")
         if not self.order_ids or len(self.order_ids) != len(set(self.order_ids)):
             raise ContractError("risk decision must reference distinct order IDs")
         if not self.risk_policy_version:

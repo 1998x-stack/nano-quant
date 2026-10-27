@@ -22,6 +22,7 @@ from nano_quant import __version__
 from nano_quant.core import ContractError, Fill, OrderIntent, RiskDecision
 from nano_quant.core.backtest_config import BacktestConfig
 from nano_quant.data import build_snapshot
+from nano_quant.data.evidence import CorporateAction, reject_unsupported_actions
 from nano_quant.data.synthetic import DATASET_ID, INSTRUMENTS, synthetic_equities
 from nano_quant.evaluation.performance import NavPoint, evaluate_nav
 from nano_quant.execution.account import SimulatedAccount
@@ -51,9 +52,20 @@ def _canonical(value: object) -> str:
     return json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
 
 
-def run_backtest(config: BacktestConfig) -> BacktestResult:
-    """Run an explicitly synthetic, no-fitting, next-open simulation."""
+def run_backtest(
+    config: BacktestConfig, *, corporate_actions: tuple[CorporateAction, ...] = ()
+) -> BacktestResult:
+    """Run an explicitly synthetic, no-fitting, next-open simulation.
+
+    Any supplied corporate action in the simulated interval is rejected until
+    accounting support exists; no silent real-market cash-flow omission.
+    """
     all_bars = synthetic_equities(config.sessions)
+    reject_unsupported_actions(
+        corporate_actions,
+        first_session=all_bars[0].session_date,
+        last_session=all_bars[-1].session_date,
+    )
     rows_by_day: dict[str, dict[str, Any]] = {}
     for bar in all_bars:
         rows_by_day.setdefault(bar.session_date.isoformat(), {})[bar.instrument_id] = bar

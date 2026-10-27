@@ -15,6 +15,7 @@ from nano_quant.core.backtest_config import load_backtest_config
 from nano_quant.core.config import SmokeConfig, load_smoke_config
 from nano_quant.data import build_snapshot, golden_bars
 from nano_quant.execution import SimulatedLedger
+from nano_quant.validation.audit import write_validation_audit
 
 
 def smoke(config: SmokeConfig) -> dict[str, str | int | bool]:
@@ -83,6 +84,13 @@ def main(argv: Sequence[str] | None = None) -> int:
     backtest_parser.add_argument(
         "--output-dir", type=Path, default=Path("reports/daily_equity_v1")
     )
+    validation_parser = sub.add_parser(
+        "validate", help="Phase D synthetic research diagnostics (NOT alpha validation)"
+    )
+    validation_parser.add_argument("--config", type=Path, required=True)
+    validation_parser.add_argument(
+        "--output", type=Path, default=Path("reports/validation/audit.json")
+    )
     args = parser.parse_args(argv)
 
     try:
@@ -91,6 +99,17 @@ def main(argv: Sequence[str] | None = None) -> int:
             print(json.dumps(smoke(smoke_config), indent=2, sort_keys=True))
             return 0
         backtest_config = load_backtest_config(args.config)
+        if args.command == "validate":
+            audit = write_validation_audit(backtest_config, args.output)
+            print(json.dumps({
+                "phase": "D",
+                "validation_output": str(args.output),
+                "synthetic_only": True,
+                "model_validated": False,
+                "negative_control_p_diagnostic": audit["circular_shift_null_p_positive"],
+                "cost_check": audit["cost_sensitivity"],
+            }, sort_keys=True, indent=2))
+            return 0
         result = run_backtest(backtest_config)
         manifest = write_report(result, args.output_dir)
         print(json.dumps({
