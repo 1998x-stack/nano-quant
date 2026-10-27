@@ -1,0 +1,7 @@
+{
+  "schema_version": 1,
+  "initial_cash_usd": "1000.00",
+  "quantity": 10,
+  "fee_usd": "1.00",
+  "slippage_bps": "10"
+}
