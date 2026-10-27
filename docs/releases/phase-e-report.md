@@ -1,6 +1,13 @@
 # Phase E — reproducible candidate build and release governance
 
-Date: 2026-10-27. **Status: candidate engineering work; publication not authorized**.
+Date: 2026-10-27. **Status: technical candidate checks PASS on code commit `c7048136`, but publication NOT authorized**.
+
+## Actual verification runs
+
+- [Standard CI](https://github.com/1998x-stack/nano-quant/actions/runs/40488518133) on commit `c7048136`: Python 3.11 and 3.12 installation, lint, mypy, unit/integration tests, Phase B/C/D regression commands all passed. **117 tests passed**, Python 3.11 line coverage **94.83%**.
+- [Release readiness workflow](https://github.com/1998x-stack/nano-quant/actions/runs/40488518124) on the same commit: wheel and source distribution built; Twine metadata check; clean wheel virtual-environment backtest matched source's financial CSV/JSON outputs; two separate source-run output files were bit-for-bit equal; Phase D audit and finance reconciliations passed. Gate produced `TECHNICAL_CANDIDATE_CHECKS_PASS`, `released=false`.
+- The workflow retains distributable files and evidence with short retention. It does **not** create a Git tag, GitHub release, publish a wheel externally, attest builds cryptographically, or approve research results.
+- After later documentation commits, verify the **new branch HEAD's** CI results before merging; do not cite an earlier SHA as if it covered later source changes.
 
 ## Starting evidence
 
@@ -63,5 +70,4 @@ artifact hashes plus `pip freeze` fingerprint.
   wheel economic output rather than incorrectly requiring identical run IDs.
 - All previous PRs require independent review and orderly merge before any
   stable publication. The automated candidate manifest is not approval.
-- Actual GitHub CI outcomes for Phase E are recorded separately only after
-  the new workflow runs; design documents must not assert it passed prematurely.
+- Branch integration, reviewer approval, license choice and release authorization remain pending; the evidence above covers the stated code commit, not the final reviewed release.
