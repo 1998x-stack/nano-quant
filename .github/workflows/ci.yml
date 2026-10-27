@@ -30,5 +30,9 @@ jobs:
         run: python -m mypy src/nano_quant
       - name: Tests with coverage
         run: python -m pytest -q --cov=nano_quant --cov-report=term-missing --cov-fail-under=85
-      - name: Phase B CLI golden smoke
+      - name: Phase B golden smoke regression
         run: python -m nano_quant.cli smoke --config examples/phase_b_golden.json
+      - name: Phase C synthetic research backtest
+        run: python -m nano_quant.cli backtest --config examples/daily_equity_v1.json --output-dir reports/ci-daily
+      - name: Assert research artifacts
+        run: python -c "from pathlib import Path; p=Path('reports/ci-daily'); assert all((p/n).is_file() for n in ('run-manifest.json','metrics.json','equity-curve.csv','trade-ledger.csv','rejections.csv'))"

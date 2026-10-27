@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from datetime import datetime
 from decimal import ROUND_DOWN, Decimal
 
 from nano_quant.core import ContractError, OrderIntent, PortfolioState, Side
@@ -11,12 +12,10 @@ from nano_quant.core.research_types import StrategySignal, TargetPortfolio
 def equal_weight_target(
     signals: tuple[StrategySignal, ...],
     *,
-    as_of: object,
+    as_of: datetime,
     max_single_weight: Decimal = Decimal("0.50"),
     cash_buffer: Decimal = Decimal("0.02"),
 ) -> TargetPortfolio:
-    from datetime import datetime
-
     if not isinstance(as_of, datetime):
         raise ContractError("as_of must be datetime")
     if not (0 < max_single_weight <= 1 and 0 <= cash_buffer < 1):
@@ -39,10 +38,8 @@ def plan_orders(
     target: TargetPortfolio,
     state: PortfolioState,
     reference_closes: dict[str, Decimal],
-    earliest_execution_at: object,
+    earliest_execution_at: datetime,
 ) -> tuple[OrderIntent, ...]:
-    from datetime import datetime
-
     if not isinstance(earliest_execution_at, datetime):
         raise ContractError("earliest execution must be datetime")
     if state.as_of > target.as_of:

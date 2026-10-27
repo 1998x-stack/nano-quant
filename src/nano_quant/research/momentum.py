@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from collections import defaultdict
+from datetime import date
 from decimal import Decimal
 
 from nano_quant.core import ContractError, DataSnapshot
@@ -16,7 +17,7 @@ def momentum_factor(snapshot: DataSnapshot, lookback_sessions: int = 20) -> Fact
     """
     if lookback_sessions < 1:
         raise ContractError("lookback must be positive")
-    history: dict[str, list[tuple[object, Decimal]]] = defaultdict(list)
+    history: dict[str, list[tuple[date, Decimal]]] = defaultdict(list)
     for bar in snapshot.bars:
         history[bar.instrument_id].append((bar.session_date, bar.close))
     scores: dict[str, Decimal] = {}
