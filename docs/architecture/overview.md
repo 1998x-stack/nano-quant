@@ -41,10 +41,10 @@ flowchart TD
     B --> C[Forecast]
     C --> D[StrategySignal]
     D --> E[TargetPortfolio]
-    E --> F{RiskDecision}
-    F -->|Approved| G[OrderIntent]
+    E --> G[Proposed OrderIntent]
+    G --> F{RiskDecision}
+    F -->|Approved| H[Execution simulator]
     F -->|Rejected| L[Audit log]
-    G --> H[Execution simulator]
     H --> I[Fill and PortfolioState]
     I --> J[BacktestReport]
     J -.ex post research feedback.-> B
