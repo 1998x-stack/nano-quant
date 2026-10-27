@@ -1,13 +1,33 @@
 # nano-quant
 
-A modular, reproducible quantitative finance research and engineering framework.
+**Modular quantitative finance research framework — architecture phase.**
 
-## Project status
+Status: **Phase A — architecture review**. This repository does **not** yet contain an executable backtest, tested finance calculations, or a validated investment strategy.
 
-The repository is in the architecture and requirements phase (Phase A). No trading system or validated investment strategy has been released.
+## Vision
 
-## Scope
+Make the path from historical data to research, models, strategies, portfolio weights, risk controls, simulated orders, and evaluation explicit, testable, time-consistent, and reproducible.
 
-Data, financial mathematics, factor research, forecasting, strategies, portfolio construction, risk management, and backtesting/evaluation.
+The v1.0 reference use case is daily, long-only, unlevered equities in USD with versioned synthetic fixtures. This is a software/research baseline—not a performance claim.
 
-The default branch `main` is reserved for reviewed, integrated work. Research results are not investment recommendations.
+## Phase A design
+
+- [System architecture (中文)](docs/architecture/overview.md)
+- [Core interface contracts](docs/architecture/contracts.md)
+- [Point-in-time and event-time rules](docs/architecture/temporal-data.md)
+- [Architecture decision record](docs/architecture/adr/0001-modular-monolith.md)
+- [Primary evidence and research protocol](docs/research/evidence-policy.md)
+- [Branch, PR, release and tag governance](docs/governance/branching-and-releases.md)
+- [v1.0 scope, backlog, v2.0 evolution](docs/releases/v1.0-plan.md)
+- [Objective acceptance and golden tests](docs/validation/acceptance.md)
+- [Phase A decision log / handoff](docs/PHASE-A-REPORT.md)
+
+## Branch policy
+
+`main` is the reviewed stable integration branch. Module work happens in temporary `module/*` branches; `release/vX.Y` branches stabilize releases; immutable version tags `vX.Y.Z` identify shipped snapshots. Do not treat branches as module storage.
+
+## Next step
+
+Phase B will create the installable Python package, skeleton modules, tests and CI. The commands and test cases in design documents are **specifications**, not claims of successful execution.
+
+No live trading, leverage, broker integration, or investment advice is provided.
