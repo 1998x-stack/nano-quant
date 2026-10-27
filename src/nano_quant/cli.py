@@ -87,11 +87,11 @@ def main(argv: Sequence[str] | None = None) -> int:
 
     try:
         if args.command == "smoke":
-            config = load_smoke_config(args.config) if args.config else SmokeConfig()
-            print(json.dumps(smoke(config), indent=2, sort_keys=True))
+            smoke_config = load_smoke_config(args.config) if args.config else SmokeConfig()
+            print(json.dumps(smoke(smoke_config), indent=2, sort_keys=True))
             return 0
-        config = load_backtest_config(args.config)
-        result = run_backtest(config)
+        backtest_config = load_backtest_config(args.config)
+        result = run_backtest(backtest_config)
         manifest = write_report(result, args.output_dir)
         print(json.dumps({
             "phase": "C",
