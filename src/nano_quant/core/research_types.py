@@ -17,7 +17,7 @@ def _freeze_scores(values: Mapping[str, Decimal], field: str) -> tuple[tuple[str
         symbol and isinstance(value, Decimal) and value.is_finite()
         for symbol, value in values.items()
     ):
-        raise ContractError(f"{field} has invalid instrument or score")
+        raise ContractError(f"{field} must have nonempty instruments and finite scores")
     return tuple(sorted(values.items()))
 
 
