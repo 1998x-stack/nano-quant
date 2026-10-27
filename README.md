@@ -1,43 +1,51 @@
 # nano-quant
 
-**Modular and reproducible quantitative finance research framework.**
+**A modular, testable, reproducible quantitative-finance research framework.**
 
-> **Status: Phase B engineering scaffold (pre-v1.0).** A tested synthetic-data harness exists. A full eight-module research backtest, real data ingestion, independent risk policy, and live brokerage integration do **not** yet exist.
+> **Status: Phase C synthetic research baseline (pre-v1.0).** Phase B's Golden Ledger remains supported. This repository now runs a complete *synthetic-data* eight-domain research path, but does not yet meet all real-market or v1.0 release verification requirements. The untrained momentum rank score is not an empirically validated return forecast.
 
 ## Quick start
 
-Requires Python 3.11+.
+Requires Python 3.11+; no market data subscription or broker credentials.
 
 ```bash
 python -m pip install -e ".[dev]"
 python -m ruff check .
 python -m mypy src/nano_quant
 python -m pytest -q --cov=nano_quant --cov-report=term-missing --cov-fail-under=85
+
+# Phase B golden ledger regression
 python -m nano_quant.cli smoke --config examples/phase_b_golden.json
-# After installation, also available as:
-nano-quant smoke --config examples/phase_b_golden.json
+
+# Phase C full synthetic monthly momentum baseline
+python -m nano_quant.cli backtest \
+    --config examples/daily_equity_v1.json \
+    --output-dir reports/daily_equity_v1
 ```
 
-The **smoke** command uses fictional market data and an explicitly **mocked** risk approval. It checks a historical information cutoff, a single next-day-open BUY fill, and USD cash/share accounting. The independent Golden Ledger A expected values are: execution price $10.01, fee $1.00, remaining cash $898.90, 10 shares, close NAV $1008.90. These are software test values, **not real investment results**.
+The backtest creates:
+`run-manifest.json`, `metrics.json`, `equity-curve.csv`,
+`trade-ledger.csv`, and `rejections.csv`.
 
-The full `backtest --config` CLI subcommand intentionally exits nonzero with "not implemented" until Phase C. Only the core contracts, synthetic data and minimal ledger are implemented; research/model/strategy/portfolio/evaluation packages are Phase C placeholders.
+The reference scenario: 120 **fictional weekday** sessions, three fictitious USD stocks, 20-session momentum, no-fitting ranking baseline, top two assets at calendar-month-end, capped equal weights and a cash buffer, independent basic risk approval, and **T close signal → next synthetic session open fill → close NAV**. Explicit commission and slippage apply. The synthetic venue uses fixed UTC times, not real-world holidays or DST.
 
-## Project documents
+**Not supported:** live trading, actual market data validation, corporate actions, shorting, leverage, complex intraday orders, trained predictive models, real-world alpha claims, or real-exchange execution. Public code availability is not permission to trade or advice to invest.
 
-- [Architecture overview](docs/architecture/overview.md)
-- [Core interface contracts](docs/architecture/contracts.md)
-- [Point-in-time conventions](docs/architecture/temporal-data.md)
-- [Phase B architecture decision](docs/architecture/adr/0002-phase-b-golden-scaffold.md)
-- [Research evidence rules](docs/research/evidence-policy.md)
-- [Git governance](docs/governance/branching-and-releases.md)
-- [v1.0 rollout](docs/releases/v1.0-plan.md)
-- [Objective acceptance tests](docs/validation/acceptance.md)
-- [Phase B execution report](docs/PHASE-B-REPORT.md)
+## Architecture and evidence
 
-## Git workflow
+- [System architecture](docs/architecture/overview.md)
+- [Actual Phase C module interfaces](docs/modules/phase-c-interfaces.md)
+- [Point-in-time/temporal requirements](docs/architecture/temporal-data.md)
+- [Phase C synthetic data manifest](docs/research/phase-c-synthetic-manifest.json)
+- [Phase C implementation and verification report](docs/PHASE-C-REPORT.md)
+- [Independent acceptance test matrix](docs/validation/acceptance.md)
+- [v1.0 release plan](docs/releases/v1.0-plan.md)
+- [Branch and release rules](docs/governance/branching-and-releases.md)
 
-Reviewed and tested changes merge into `main`. Short-lived `feature/*` / `module/*` branches isolate development; `release/vX.Y` stabilizes releases; immutable `vX.Y.Z` tags identify official releases.
+## Development workflow
 
-## Licensing
+The stable integration branch is `main`. PR #2 contains Phase B; **Phase C PR #3 is stacked on Phase B** until #2 has been reviewed and merged, after which PR #3 should be retargeted to `main` and CI rechecked. No `v1.0.0` tag is issued for the engineering baseline.
 
-The repository owner has **not selected a software license**. Public visibility alone does not grant reuse rights.
+## License
+
+No public software license has been selected by the repository owner. Public visibility alone does not confer a general reuse license.

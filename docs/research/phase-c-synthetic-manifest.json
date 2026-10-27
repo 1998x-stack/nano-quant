@@ -1,0 +1,23 @@
+{
+  "dataset_id": "synthetic-equities-c-v1",
+  "source_name": "nano_quant.data.synthetic.synthetic_equities",
+  "source_url": null,
+  "license_or_permission": "fictional deterministic generator; no market data",
+  "market": "synthetic-weekdays-utc-not-actual-exchange",
+  "start_date": "2026-01-05",
+  "default_sessions": 120,
+  "instruments": ["SYNTH-A", "SYNTH-B", "SYNTH-C"],
+  "schema_version": "pricebar-phase-c-1",
+  "time_semantics": {
+    "open": "14:30 UTC",
+    "event_at_close": "21:00 UTC",
+    "available_at_close": "21:01 UTC",
+    "signal_at": "21:02 UTC"
+  },
+  "data_sha256": "Computed from the exact generated bars at run time and stored in run-manifest.json",
+  "calendar": "weekdays excluding weekends only (holidays and DST not modeled)",
+  "prices": "fictional raw OHLCV values, Decimal rounded to US cents",
+  "corporate_actions": "none",
+  "research_limitation": "Cannot demonstrate real-world prediction, alpha, or trading capacity",
+  "permission_note": "No real external market data is downloaded by this fixture"
+}
