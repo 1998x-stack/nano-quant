@@ -10,7 +10,6 @@ from __future__ import annotations
 import csv
 import hashlib
 import json
-import os
 import subprocess
 import sys
 from dataclasses import dataclass
@@ -69,7 +68,7 @@ def run_backtest(config: BacktestConfig) -> BacktestResult:
     ).hexdigest()
     config_hash = hashlib.sha256(_canonical(config.as_dict()).encode("utf-8")).hexdigest()
     run_id = hashlib.sha256(
-        f"{__version__}:{dataset_hash}:{config_hash}".encode("utf-8")
+        f"{__version__}:{_source_revision()}:{dataset_hash}:{config_hash}".encode("utf-8")
     ).hexdigest()[:16]
 
     account = SimulatedAccount(config.initial_cash_usd)
@@ -156,15 +155,19 @@ def run_backtest(config: BacktestConfig) -> BacktestResult:
 
 
 def _source_revision() -> str:
-    # Use the actual commit when Git is available; never invent a revision.
+    # Attribute Git HEAD only to this checked-out project's root, not an
+    # unrelated repository from which the installed command was invoked.
+    root = Path(__file__).resolve().parents[2]
+    if not (root / ".git").exists():
+        return "unavailable"
     try:
         r = subprocess.run(
-            ["git", "rev-parse", "--verify", "HEAD"], capture_output=True,
-            text=True, check=True, timeout=5,
+            ["git", "-C", str(root), "rev-parse", "--verify", "HEAD"],
+            capture_output=True, text=True, check=True, timeout=5,
         )
         return r.stdout.strip()
     except (OSError, subprocess.CalledProcessError, subprocess.TimeoutExpired):
-        return os.environ.get("GITHUB_SHA", "unavailable")
+        return "unavailable"
 
 
 def write_report(result: BacktestResult, directory: Path) -> dict[str, object]:
