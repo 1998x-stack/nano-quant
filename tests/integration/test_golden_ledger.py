@@ -125,6 +125,16 @@ def test_higher_transaction_fees_cannot_increase_nav() -> None:
     assert navs == [Decimal("1009.90"), Decimal("1008.90"), Decimal("1004.90")]
 
 
+def test_fractional_cent_fee_rejected() -> None:
+    _, tomorrow = golden_bars()
+    ledger, order, approval = scenario()
+    with pytest.raises(ContractError, match="USD cents"):
+        ledger.execute_buy_at_next_open(
+            order, approval, tomorrow,
+            slippage_bps=Decimal("10"), fee=Decimal("0.005"),
+        )
+
+
 def test_sell_and_mismatched_instrument_are_not_implemented() -> None:
     _, tomorrow = golden_bars()
     ledger, order, approval = scenario()

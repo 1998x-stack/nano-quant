@@ -25,12 +25,12 @@ def ensure_utc(value: datetime, field: str = "timestamp") -> None:
 
 
 def _positive(value: Decimal, field: str) -> None:
-    if not value.is_finite() or value <= 0:
+    if not isinstance(value, Decimal) or not value.is_finite() or value <= 0:
         raise ContractError(f"{field} must be finite and positive")
 
 
 def _nonnegative(value: Decimal, field: str) -> None:
-    if not value.is_finite() or value < 0:
+    if not isinstance(value, Decimal) or not value.is_finite() or value < 0:
         raise ContractError(f"{field} must be finite and nonnegative")
 
 
@@ -57,7 +57,7 @@ class PriceBar:
             raise ContractError("high below other OHLC prices")
         if self.low > min(self.open, self.close, self.high):
             raise ContractError("low above other OHLC prices")
-        if not isinstance(self.volume, int) or self.volume < 0:
+        if not isinstance(self.volume, int) or isinstance(self.volume, bool) or self.volume < 0:
             raise ContractError("volume must be a nonnegative integer")
         for field in ("open_at", "event_at", "available_at"):
             ensure_utc(getattr(self, field), field)
@@ -111,7 +111,7 @@ class OrderIntent:
             raise ContractError("order identifier, instrument, price context required")
         if not isinstance(self.side, Side):
             raise ContractError("side must be Side")
-        if not isinstance(self.quantity, int) or self.quantity <= 0:
+        if not isinstance(self.quantity, int) or isinstance(self.quantity, bool) or self.quantity <= 0:
             raise ContractError("order quantity must be a positive integer")
         ensure_utc(self.created_at, "created_at")
         ensure_utc(self.earliest_execution_at, "earliest_execution_at")
@@ -153,7 +153,8 @@ class Fill:
     def __post_init__(self) -> None:
         if not self.fill_id or not self.order_id or not self.instrument_id:
             raise ContractError("fill identifiers required")
-        if not isinstance(self.side, Side) or self.quantity <= 0:
+        if (not isinstance(self.side, Side) or not isinstance(self.quantity, int)
+                or isinstance(self.quantity, bool) or self.quantity <= 0):
             raise ContractError("invalid fill side or quantity")
         _positive(self.price, "fill price")
         _nonnegative(self.fee, "fill fee")
@@ -171,9 +172,11 @@ class PortfolioState:
     def __post_init__(self) -> None:
         ensure_utc(self.as_of, "as_of")
         _nonnegative(self.cash, "cash")
+        if self.cash != self.cash.quantize(Decimal("0.01")):
+            raise ContractError("USD cash must use cents")
         if not self.ledger_version:
             raise ContractError("ledger_version required")
-        if any(not symbol or not isinstance(qty, int) or qty <= 0
+        if any(not symbol or not isinstance(qty, int) or isinstance(qty, bool) or qty <= 0
                for symbol, qty in self.positions.items()):
             raise ContractError("positions must be positive whole shares")
         if set(self.positions) != set(self.marks):

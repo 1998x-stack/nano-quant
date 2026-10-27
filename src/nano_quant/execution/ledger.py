@@ -54,10 +54,12 @@ class SimulatedLedger:
             raise ContractError("order/bar instrument mismatch")
         if self.state.positions and set(self.state.positions) != {order.instrument_id}:
             raise ContractError("Phase B ledger supports one instrument only")
-        if not slippage_bps.is_finite() or not (0 <= slippage_bps <= BPS):
+        if not isinstance(slippage_bps, Decimal) or not slippage_bps.is_finite() or not (0 <= slippage_bps <= BPS):
             raise ContractError("invalid slippage_bps")
-        if not fee.is_finite() or fee < 0:
+        if not isinstance(fee, Decimal) or not fee.is_finite() or fee < 0:
             raise ContractError("invalid fee")
+        if fee != fee.quantize(CENT):
+            raise ContractError("fee must use USD cents")
 
         fill_price = (
             bar.open * (Decimal("1") + slippage_bps / BPS)

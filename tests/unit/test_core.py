@@ -44,6 +44,7 @@ def test_price_bar_accepts_valid_synthetic_input() -> None:
         ("open", Decimal("0")),
         ("close", Decimal("NaN")),
         ("volume", -1),
+        ("volume", True),
         ("source_id", ""),
         ("instrument_id", ""),
     ],
@@ -84,6 +85,8 @@ def test_order_rejects_invalid_chronology_and_quantities() -> None:
     order = _order()
     with pytest.raises(ContractError, match="positive"):
         replace(order, quantity=0)
+    with pytest.raises(ContractError, match="positive"):
+        replace(order, quantity=True)
     with pytest.raises(ContractError, match="follow"):
         replace(order, earliest_execution_at=order.created_at)
     with pytest.raises(ContractError, match="side"):
