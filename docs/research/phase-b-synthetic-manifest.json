@@ -1,0 +1,17 @@
+{
+  "dataset_id": "synthetic-golden-v1",
+  "source_name": "nano_quant.data.fixtures.golden_bars",
+  "source_url": null,
+  "license_or_permission": "synthetic test fixture",
+  "market": "not a real security market",
+  "time_coverage": ["2026-01-05", "2026-01-06"],
+  "source_version": "fixture-v1",
+  "schema_version": "pricebar-phase-b-1",
+  "adjustment_policy": "raw prices; no corporate actions",
+  "universe_policy": "single fictional instrument SYNTH-A",
+  "limitations": [
+    "Tests only basic time ordering and cash/share accounting",
+    "No real-world market predictability evidence",
+    "No real exchange holiday calendar or transaction venue"
+  ]
+}
