@@ -33,13 +33,13 @@ def test_cli_smoke_is_deterministic(capsys: object) -> None:
     assert payload["position_shares"] == 10
 
 
-def test_cli_backtest_explicitly_unavailable(capsys: object) -> None:
+def test_cli_backtest_rejects_missing_config(capsys: object) -> None:
     from _pytest.capture import CaptureFixture
 
     capture = capsys
     assert isinstance(capture, CaptureFixture)
-    assert main(["backtest", "--config", "examples/daily_equity_v1.yaml"]) == 2
-    assert "not implemented" in capture.readouterr().err
+    assert main(["backtest", "--config", "examples/nonexistent-file.json"]) == 1
+    assert "unable to load backtest JSON config" in capture.readouterr().err
 
 
 def test_invalid_cli_config_is_nonzero(tmp_path: Path, capsys: object) -> None:

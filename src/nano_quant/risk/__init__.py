@@ -1,5 +1,5 @@
-"""Independent risk policy and approval logic: Phase C implementation planned.
+"""Independent Phase C basic pretrade risk-policy gate."""
 
-Phase B smoke uses a clearly labeled synthetic RiskDecision to test the
-execution gate; it does not assert that risk underwriting exists.
-"""
+from nano_quant.risk.policy import review_orders
+
+__all__ = ["review_orders"]

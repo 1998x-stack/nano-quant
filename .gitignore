@@ -11,5 +11,6 @@ venv/
 dist/
 build/
 runs/
+reports/
 .env
 .DS_Store

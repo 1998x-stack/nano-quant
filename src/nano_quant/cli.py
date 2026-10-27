@@ -1,4 +1,4 @@
-"""Phase B smoke command. Full backtest is reserved for Phase C."""
+"""User-facing synthetic smoke and research backtest commands."""
 
 from __future__ import annotations
 
@@ -9,7 +9,9 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Sequence
 
+from nano_quant.backtest import run_backtest, write_report
 from nano_quant.core import ContractError, OrderIntent, PortfolioState, RiskDecision, Side
+from nano_quant.core.backtest_config import load_backtest_config
 from nano_quant.core.config import SmokeConfig, load_smoke_config
 from nano_quant.data import build_snapshot, golden_bars
 from nano_quant.execution import SimulatedLedger
@@ -46,10 +48,7 @@ def smoke(config: SmokeConfig) -> dict[str, str | int | bool]:
     )
     ledger = SimulatedLedger(
         PortfolioState(
-            as_of=decision_at,
-            cash=config.initial_cash,
-            positions={},
-            marks={},
+            as_of=decision_at, cash=config.initial_cash, positions={}, marks={}
         )
     )
     fill = ledger.execute_buy_at_next_open(
@@ -77,19 +76,35 @@ def main(argv: Sequence[str] | None = None) -> int:
     sub = parser.add_subparsers(dest="command", required=True)
     smoke_parser = sub.add_parser("smoke", help="Run Phase B golden ledger")
     smoke_parser.add_argument("--config", type=Path, default=None)
-    backtest = sub.add_parser("backtest", help="Full backtest: Phase C only")
-    backtest.add_argument("--config", type=Path, required=True)
+    backtest_parser = sub.add_parser(
+        "backtest", help="Run daily synthetic eight-domain research baseline"
+    )
+    backtest_parser.add_argument("--config", type=Path, required=True)
+    backtest_parser.add_argument(
+        "--output-dir", type=Path, default=Path("reports/daily_equity_v1")
+    )
     args = parser.parse_args(argv)
 
-    if args.command == "backtest":
-        print("Full research backtest is not implemented (planned for Phase C).", file=sys.stderr)
-        return 2
     try:
-        config = load_smoke_config(args.config) if args.config else SmokeConfig()
-        print(json.dumps(smoke(config), indent=2, sort_keys=True))
+        if args.command == "smoke":
+            smoke_config = load_smoke_config(args.config) if args.config else SmokeConfig()
+            print(json.dumps(smoke(smoke_config), indent=2, sort_keys=True))
+            return 0
+        backtest_config = load_backtest_config(args.config)
+        result = run_backtest(backtest_config)
+        manifest = write_report(result, args.output_dir)
+        print(json.dumps({
+            "phase": "C",
+            "run_id": result.run_id,
+            "output_dir": str(args.output_dir),
+            "synthetic_only": True,
+            "investment_validated": False,
+            "metrics": result.metrics,
+            "dataset_sha256": manifest["dataset_sha256"],
+        }, indent=2, sort_keys=True))
         return 0
     except (ContractError, OSError, ValueError) as exc:
-        print(f"smoke rejected: {exc}", file=sys.stderr)
+        print(f"{args.command} rejected: {exc}", file=sys.stderr)
         return 1
 
 
