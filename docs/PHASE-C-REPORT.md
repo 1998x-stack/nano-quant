@@ -1,6 +1,8 @@
 # Phase C — 合成量化研究纵向闭环
 
-状态：**待 CI 实测、待 PR 审核；不是 v1.0 正式发布**。
+状态：**Phase C 代码与合成数据测试通过，PR #3 待审核；不是 v1.0 正式发布**。
+
+验证证据：[GitHub Actions PR #3](https://github.com/1998x-stack/nano-quant/actions/runs/40477885950)，对应 commit `f85735cc`。Python 3.11 和 3.12 可编辑安装、Ruff、mypy、pytest、Phase B 黄金账本回归、Phase C CLI 完整报告生成均通过。Python 3.11 测试 **86 passed / 95.14% 行覆盖率**。这一结果仅证明规定的软件和合成场景检查通过，不证明真实金融策略的统计优势。
 
 ## 本次实现
 
@@ -37,4 +39,4 @@ python -m nano_quant.cli backtest --config examples/daily_equity_v1.json --outpu
 
 CI 需要执行 Ruff、mypy、pytest 覆盖率、Phase B 账本回归、Phase C CLI 完整报告生成。任何失败均不能合并为稳定版。
 
-实际测试结果待 CI 完成后补充，禁止使用预期收益代替观测记录。
+2026-10-27 运行记录：PR #3 的 CI 已通过（详见上方证据链接）。仍未通过 v1.0 对真实交易所历史数据、披露版本、退市、市场容量和真实样本外预测能力的验证。PR #3 以未合并的 Phase B 分支为 base；必须按顺序审核合并，不得跳过对 main 的必要复验。
