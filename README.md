@@ -2,7 +2,7 @@
 
 **A modular, testable, reproducible quantitative-finance research framework.**
 
-> **Status: Phase D independent-validation scaffold (pre-v1.0).** The eight-domain synthetic pipeline now includes point-in-time revision and historical-universe tests, order approval fingerprinting, unsupported corporate-action rejection, walk-forward split **protocols** and negative-control/cost diagnostics. No trained or empirically validated real-market model is claimed.
+> **Status: Phase E technical release-candidate checks (pre-v1.0, unreleased).** The eight-domain synthetic framework, point-in-time data controls and research diagnostics have automated replay and source/wheel consistency checks. **No official version tag, live trading, independent code approval, or real-market predictive validity is claimed.**
 
 ## Quick start
 
@@ -26,6 +26,16 @@ python -m nano_quant.cli backtest \
 python -m nano_quant.cli validate \
     --config examples/daily_equity_v1.json \
     --output reports/validation/audit.json
+
+# Phase E source replay gate (candidate checks, not publication)
+python -m nano_quant.cli backtest --config examples/daily_equity_v1.json --output-dir reports/release/first
+python -m nano_quant.cli backtest --config examples/daily_equity_v1.json --output-dir reports/release/second
+python -m tools.release_gate \
+    --first reports/release/first \
+    --second reports/release/second \
+    --audit reports/validation/audit.json \
+    --revision "$(git rev-parse HEAD)" \
+    --output reports/release/evidence.json
 ```
 
 The backtest creates:
@@ -46,13 +56,16 @@ The reference scenario: 120 **fictional weekday** sessions, three fictitious USD
 - [Phase D validation APIs](docs/modules/phase-d-validation.md)
 - [Phase D actual CI report](docs/PHASE-D-REPORT.md)
 - [Real-data onboarding gates](docs/research/real-data-readiness.md)
+- [Phase E candidate checks and limits](docs/releases/phase-e-report.md)
+- [Release checklist and reviewer gates](docs/releases/release-checklist.md)
+- [Development change log](CHANGELOG.md)
 - [Independent acceptance test matrix](docs/validation/acceptance.md)
 - [v1.0 release plan](docs/releases/v1.0-plan.md)
 - [Branch and release rules](docs/governance/branching-and-releases.md)
 
 ## Development workflow
 
-The stable integration branch is `main`. PR #2 contains Phase B; **Phase C PR #3 is stacked on Phase B** and **Phase D PR #4 is stacked on Phase C**. Merge in sequence, retargeting and checking CI before each downstream PR reaches `main`. No `v1.0.0` tag is issued for the engineering baseline.
+The stable integration branch is `main`. Phase B PR #2, Phase C PR #3, Phase D PR #4 and Phase E PR #5 form a **stacked review chain**. Merge and retarget in order, rerunning required CI before each change enters `main`. This technical evidence is **not** an approval to publish a version tag.
 
 ## License
 

@@ -1,0 +1,65 @@
+name: Release readiness (no publication)
+
+on:
+  push:
+    branches: ["feature/phase-e-*", "release/**"]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  candidate:
+    name: Verify source and wheel
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Install project and build tools
+        run: |
+          python -m pip install -e ".[dev]"
+          python -m pip install "build>=1,<2" "twine>=5,<7"
+      - name: Build source and wheel distributions
+        run: |
+          python -m build
+          python -m twine check dist/*
+      - name: Run two identical source research replays
+        run: |
+          python -m nano_quant.cli backtest --config examples/daily_equity_v1.json --output-dir reports/release/first
+          python -m nano_quant.cli backtest --config examples/daily_equity_v1.json --output-dir reports/release/second
+      - name: Phase D synthetic-only audit
+        run: |
+          python -m nano_quant.cli validate --config examples/daily_equity_v1.json --output reports/release/audit.json
+      - name: Install built wheel in a clean virtual environment
+        run: |
+          python -m venv /tmp/nano-quant-wheel-check
+          /tmp/nano-quant-wheel-check/bin/python -m pip install dist/*.whl
+          /tmp/nano-quant-wheel-check/bin/python -m nano_quant.cli backtest --config examples/daily_equity_v1.json --output-dir reports/release/wheel
+      - name: Capture package environment provenance
+        run: |
+          python -m pip freeze > reports/release/pip-freeze.txt
+      - name: Verify source, wheel, accounting, audit and hashes
+        run: |
+          python -m tools.release_gate \
+            --first reports/release/first \
+            --second reports/release/second \
+            --wheel-run reports/release/wheel \
+            --audit reports/release/audit.json \
+            --revision "$(git rev-parse HEAD)" \
+            --dist-dir dist \
+            --freeze reports/release/pip-freeze.txt \
+            --output reports/release/evidence.json
+      - name: Preserve candidate evidence (not a release)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase-e-candidate-evidence-${{ github.run_id }}
+          path: |
+            dist/
+            reports/release/
+          retention-days: 14
+          if-no-files-found: warn
