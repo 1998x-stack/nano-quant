@@ -30,7 +30,7 @@ python -m nano_quant.cli validate \
 # Phase E source replay gate (candidate checks, not publication)
 python -m nano_quant.cli backtest --config examples/daily_equity_v1.json --output-dir reports/release/first
 python -m nano_quant.cli backtest --config examples/daily_equity_v1.json --output-dir reports/release/second
-python tools/release_gate.py \
+python -m tools.release_gate \
     --first reports/release/first \
     --second reports/release/second \
     --audit reports/validation/audit.json \
