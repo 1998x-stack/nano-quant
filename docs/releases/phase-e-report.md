@@ -9,6 +9,21 @@ Date: 2026-10-27. **Status: technical candidate checks PASS on code commit `c704
 - The workflow retains distributable files and evidence with short retention. It does **not** create a Git tag, GitHub release, publish a wheel externally, attest builds cryptographically, or approve research results.
 - After later documentation commits, verify the **new branch HEAD's** CI results before merging; do not cite an earlier SHA as if it covered later source changes.
 
+## 2026-10-28 independent financial replay hardening
+
+The technical review found that **two identical generated reports alone do not independently establish correct portfolio accounting**. To strengthen the release gate:
+
+- Added `tools/financial_replay.py`, which **does not call the production execution ledger or evaluator**. It reconstructs daily cash and holdings from trade-ledger.csv, applies actual synthetic open prices and slippage, reprices the portfolio using raw synthetic closes and compares **every day's NAV**.
+- Recomputed the source synthetic OHLCV fingerprint and maximum drawdown, and checked position/cash non-negativity, fills occurring at the synthetic open, and fee schedule consistency.
+- Added three adverse tests that identically modify *both* replay reports' daily NAV, reported drawdown or trade fill price; all must be rejected despite unchanged inter-run equality.
+- Fixed command invocation to `python -m tools.release_gate` to ensure reliable imports from the repository root.
+
+[Final Phase E PR CI](https://github.com/1998x-stack/nano-quant/actions/runs/40616318295) and [release-readiness build](https://github.com/1998x-stack/nano-quant/actions/runs/40616318287), both successful on the tested PR version: Python 3.11 / 3.12 passed; **120 tests passed; 94.83% measured line coverage**. Wheel and sdist passed Twine, clean-wheel run matched source financial outputs, and the release gate returned `TECHNICAL_CANDIDATE_CHECKS_PASS` with `released=false`.
+
+The PR-triggered workflow may build a synthetic merge commit distinct from the branch HEAD; the evidence manifest's `source_revision` identifies the *actual checkout* evaluated by that workflow. When final integration is approved, rerun from the exact final main commit rather than assuming a PR test commit is the release commit.
+
+**Git governance still blocked:** as of this review PR #2–#5 remained open, all four review lists were empty, branch protection could not be read with the connection's permissions, and no formal release has been authorized. Technical readiness is not an approval to merge or release.
+
 ## Starting evidence
 
 At the start of this stage:

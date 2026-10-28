@@ -50,7 +50,7 @@ do not label it institutional investment readiness.
 | Unit, integration and coverage | Architectural/code review and approval |
 | Ruff, mypy, Python compatibility | Scope and product risk acceptance |
 | Source/wheel build and wheel smoke | License and redistribution permission |
-| Replay equality and accounting | Approve precise public release version |
+| Replay equality and independent cash/position/NAV/drawdown re-computation | Approve precise public release version |
 | Dataset/revision/hash provenance | Main branch/ruleset enforcement |
 | Phase D negative control and cost comparison | Real market validation requirements if claiming v1.0 |
 
