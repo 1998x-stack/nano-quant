@@ -45,7 +45,7 @@ python -m pytest -q
 python -m nano_quant.cli backtest --config examples/daily_equity_v1.json --output-dir reports/release/first
 python -m nano_quant.cli backtest --config examples/daily_equity_v1.json --output-dir reports/release/second
 python -m nano_quant.cli validate --config examples/daily_equity_v1.json --output reports/release/audit.json
-python tools/release_gate.py \
+python -m tools.release_gate \
   --first reports/release/first \
   --second reports/release/second \
   --audit reports/release/audit.json \
