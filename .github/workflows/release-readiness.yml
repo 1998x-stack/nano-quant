@@ -44,7 +44,7 @@ jobs:
           python -m pip freeze > reports/release/pip-freeze.txt
       - name: Verify source, wheel, accounting, audit and hashes
         run: |
-          python tools/release_gate.py \
+          python -m tools.release_gate \
             --first reports/release/first \
             --second reports/release/second \
             --wheel-run reports/release/wheel \
