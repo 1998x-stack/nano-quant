@@ -104,3 +104,40 @@ def test_wheel_financial_outputs_must_match_source(candidate, tmp_path: Path) ->
         stream.write("extra,row\n")
     with pytest.raises(GateError, match="wheel behavior"):
         verify_candidate(first, second, audit, expected_revision=sha, wheel_run=wheel_dir)
+
+
+def test_identically_forged_nav_rejected_by_independent_ledger(candidate) -> None:
+    first, second, audit, sha = candidate
+    for folder in (first, second):
+        path = folder / "equity-curve.csv"
+        lines = path.read_text(encoding="utf-8").splitlines()
+        date, nav = lines[30].split(",")
+        lines[30] = f"{date},{Decimal(nav) + Decimal('10.00')}"
+        path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    with pytest.raises(GateError, match="daily NAV inconsistent"):
+        verify_candidate(first, second, audit, expected_revision=sha)
+
+
+def test_identically_forged_drawdown_rejected(candidate) -> None:
+    first, second, audit, sha = candidate
+    for folder in (first, second):
+        path = folder / "metrics.json"
+        data = json.loads(path.read_text(encoding="utf-8"))
+        data["max_drawdown_pct"] = "99.0000"
+        path.write_text(json.dumps(data), encoding="utf-8")
+    with pytest.raises(GateError, match="maximum drawdown inconsistent"):
+        verify_candidate(first, second, audit, expected_revision=sha)
+
+
+def test_identically_forged_fill_price_rejected(candidate) -> None:
+    first, second, audit, sha = candidate
+    for folder in (first, second):
+        path = folder / "trade-ledger.csv"
+        lines = path.read_text(encoding="utf-8").splitlines()
+        columns = lines[1].split(",")
+        assert len(columns) == 8
+        columns[5] = str(Decimal(columns[5]) + Decimal("1.00"))
+        lines[1] = ",".join(columns)
+        path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    with pytest.raises(GateError, match="fill price differs"):
+        verify_candidate(first, second, audit, expected_revision=sha)

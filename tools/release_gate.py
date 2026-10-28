@@ -16,6 +16,8 @@ from decimal import Decimal, InvalidOperation
 from pathlib import Path
 from typing import Any, Sequence
 
+from tools.financial_replay import verify_financial_replay
+
 RESULT_FILES = (
     "run-manifest.json",
     "metrics.json",
@@ -161,6 +163,10 @@ def _validate_run(run: Path, expected_revision: str) -> dict[str, Any]:
         all(row["filled_at_utc"][:10] > row["order_id"][:10] for row in trades),
         "trade appears before or on signal session",
     )
+    try:
+        verify_financial_replay(manifest, metrics, nav, trades)
+    except ValueError as exc:
+        raise GateError(f"independent financial replay: {exc}") from exc
     return {"manifest": manifest, "metrics": metrics, "trades": len(trades)}
 
 
